@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default function getBudgetObject(income, gdp, capita) {
     return {
       income,
@@ -6,5 +5,5 @@ export default function getBudgetObject(income, gdp, capita) {
       capita,
     };
 
-    return budge
+    return budget;
 }
