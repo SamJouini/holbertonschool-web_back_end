@@ -1,5 +1,5 @@
 // 1-initializeRooms.js
-import ClassRoom from './0-classroom.js';
+import ClassRoom from './0-classroom';
 
 function initializeRooms() {
   const room1 = new ClassRoom(19);
