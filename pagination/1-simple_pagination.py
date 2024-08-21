@@ -18,8 +18,7 @@ def index_range(page: int, page_size: int) -> tuple:
 
 
 class Server:
-    """Server class to paginate a database of popular baby names.
-    """
+    """Server class to paginate a database of popular baby names."""
     DATA_FILE = "Popular_Baby_Names.csv"
 
 
@@ -28,8 +27,7 @@ def __init__(self):
 
 
 def dataset(self) -> List[List]:
-    """Cached dataset
-    """
+    """Cached dataset"""
     if self.__dataset is None:
         with open(self.DATA_FILE) as f:
             reader = csv.reader(f)
@@ -42,15 +40,13 @@ def dataset(self) -> List[List]:
 def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
     """Retrieve a specific page of data from the dataset.
     Returns a list of rows for the specified page."""
-    assert isinstance(page, int) and page > 0, \
-        "page must be a positive integer"
-    assert isinstance(page_size, int) and page_size > 0, \
-        "page_size must be a positive integer"
+    assert isinstance(page, int) and page > 0
+    assert isinstance(page_size, int) and page_size > 0
 
+    start_index, end_index = index_range(page, page_size)
     dataset = self.dataset()
-    start, end = index_range(page, page_size)
 
-    if start >= len(dataset):
+    if start_index >= len(dataset):
         return []
 
-    return dataset[start:end]
+    return dataset[start_index:end_index]
