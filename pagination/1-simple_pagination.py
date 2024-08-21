@@ -2,8 +2,7 @@
 """Calculate the start and end indexes for pagination."""
 
 import csv
-import math
-from typing import List
+from typing import List, Tuple
 
 
 def index_range(page: int, page_size: int) -> tuple:
@@ -38,10 +37,6 @@ def dataset(self) -> List[List]:
         self.__dataset = dataset[1:]
 
     return self.__dataset
-
-
-def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-    pass
 
 
 def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
