@@ -1,56 +1,35 @@
-const fs = require('fs').promises;
+const fs = require('fs');
 
-async function countStudents(path) {
+const countStudents = async (path) => {
+  let data = '';
+
   try {
-    const data = await fs.readFile(path, 'utf8');
-    const lines = data.trim().split('\n');
-
-    if (lines.length <= 1) {
-      throw new Error('No students found in the database');
-    }
-
-    const fields = {};
-    const students = [];
-    lines.shift();
-
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-
-      if (trimmedLine !== '') {
-        const student = trimmedLine.split(',');
-
-        if (student.length >= 4) {
-          const firstName = student[0];
-          const field = student[3];
-
-          students.push(firstName);
-
-          if (!fields[field]) {
-            fields[field] = {
-              count: 0,
-              names: [],
-            };
-          }
-
-          fields[field].count += 1;
-          fields[field].names.push(firstName);
-        }
-      }
-    }
-
-    let output = `Number of students: ${students.length}\n`;
-
-    for (const field in fields) {
-      if (Object.hasOwn(fields, field)) {
-        const { count, names } = fields[field];
-        output += `Number of students in ${field}: ${count}. List: ${names.join(', ')}\n`;
-      }
-    }
-
-    return output.trim();
-  } catch (err) {
+    data = await fs.promises.readFile(path, 'utf-8');
+  } catch (error) {
     throw new Error('Cannot load the database');
   }
-}
+
+  const dataSet = data.split('\n').slice(1);
+  const normalized = dataSet.map((line) => line.split(','))
+    .filter((student) => student.length === 4);
+
+  const students = normalized.map((student) => ({
+    firstname: student[0],
+    lastname: student[1],
+    age: student[2],
+    field: student[3],
+  }));
+
+  const csStudents = students.filter((s) => s.field === 'CS')
+    .map((s) => s.firstname);
+  const sweStudents = students.filter((s) => s.field === 'SWE')
+    .map((s) => s.firstname);
+
+  console.log(`Number of students: ${students.length}`);
+  console.log(`Number of students in CS: ${csStudents.length}. List: ${csStudents.join(', ')}`);
+  console.log(`Number of students in SWE: ${sweStudents.length}. List: ${sweStudents.join(', ')}`);
+
+  return { students, csStudents, sweStudents };
+};
 
 module.exports = countStudents;
