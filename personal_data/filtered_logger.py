@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+
 """ Module that returns the log message obfuscated """
+
 import logging
 import mysql.connector
 import re
@@ -18,6 +20,7 @@ def filter_datum(fields: List[str], redaction: str,
 
 
 def get_logger() -> logging.Logger:
+    """Return a configured logger."""
     user_data = logging.getLogger()
     user_data.propagate = False
     user_data.setLevel(logging.INFO)
@@ -47,7 +50,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
 
 
 def main():
-
+    """Retrieve users and log their data with PII redacted."""
     db = get_db()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users")
@@ -80,7 +83,9 @@ class RedactingFormatter(logging.Formatter):
         message = filter_datum(self.fields, self.REDACTION,
                                record.msg, self.SEPARATOR)
         record.msg = message
+
         return super().format(record)
+
 
 if __name__ == '__main__':
     main()
