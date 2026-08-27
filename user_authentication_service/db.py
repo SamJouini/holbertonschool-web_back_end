@@ -4,6 +4,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
 from user import Base, User
@@ -44,3 +45,42 @@ class DB:
         self._session.add(new_user)
         self._session.commit()
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Finds the first user matching the given filter arguments.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments corresponding to User
+                column names and their expected values.
+
+        Returns:
+            User: The first User object matching the filter.
+
+        Raises:
+            NoResultFound: If no user matches the given filter.
+            InvalidRequestError: If invalid query arguments are passed.
+        """
+        return self._session.query(User).filter_by(**kwargs).one()
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Updates a user's attributes and commits the change.
+
+        Args:
+            user_id (int): The ID of the user to update.
+            **kwargs: Arbitrary keyword arguments corresponding to User
+                column names and their new values.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If an argument does not correspond to a
+                valid user attribute.
+        """
+        user = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError(
+                    "{} is not a valid user attribute".format(key))
+            setattr(user, key, value)
+        self._session.commit()
